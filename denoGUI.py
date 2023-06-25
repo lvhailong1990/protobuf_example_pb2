@@ -1,27 +1,30 @@
-import protobuf_example_pb2  # 导入生成的protobuf模块
-from google.protobuf import text_format
+import tutorial_pb2
 
-p = protobuf_example_pb2.p()
+p = tutorial_pb2.Person()
 p.name = "John"
 p.id = 123
 p.email = "john@example.com"
 
 phone_number = p.phones.add()
 phone_number.number = "1234567890"
-phone_number.type = protobuf_example_pb2.p.MOBILE
+phone_number.type = tutorial_pb2.Person.MOBILE
 
-address = protobuf_example_pb2.AddressBook()
+address = tutorial_pb2.AddressBook()
 address.people.extend([p])
 
 with open("address.bin", "wb") as f:
     f.write(address.SerializeToString())
 
-new = protobuf_example_pb2.AddressBook()
+new = tutorial_pb2.AddressBook()
 with open("address.bin", "rb") as f:
     new.ParseFromString(f.read())
 
-print("Name:", new.people[0].name)
-print("ID:", new.people[0].id)
-print("Email:", new.people[0].email)
-print("Phone Number:", new.people[0].phones[0].number)
-print("Phone Type:", new.people[0].phones[0].type)
+# 使用循环打印所有人员信息
+for person in new.people:
+    print("Name:", person.name)
+    print("ID:", person.id)
+    print("Email:", person.email)
+
+    for phone in person.phones:
+        print("Phone Number:", phone.number)
+        print("Phone Type:", phone.type)
